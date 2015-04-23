@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <!-- For viewing the page on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One Minute Timer</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script src="deps/tock.js"></script>
+    <script>
+      window.onload = function() {
+        var countdown = Tock({
+          callback: function () {
+            var time = countdown.msToTime(countdown.lap()).split('.')[0]
+            $('#time').text(time);
+          },
+          countdown: true,
+          interval: 250,
+          complete: function() {
+            reset();
+          }
+        });
+        $('#start').on('click', function () {
+          countdown.start("01:00");
+          $('#start').hide();
+          $('#pause').show();
+          $('#reset').show();
+        });
+        $('#pause').on('click', function () {
+          countdown.pause();
+          if($('#pause').text() == 'Pause') {
+            $('#pause').text('Resume');
+          } else {
+            $('#pause').text('Pause');
+          }
+        });
+        var reset = function () {
+          $('#time').text("01:00");
+          $('#start').show();
+          $('#pause').hide();
+          $('#reset').hide();
+        };
+        $('#reset').on('click', function () {
+          countdown.stop();
+          reset();
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <h1>One Minute Timer</h1>
+    <div id="clockface"><h2 id="time">01:00</h2></div>
+    <button id="start">Start Timer</button>
+    <div>
+      <button id="pause" style="display:none;">Pause</button>
+      <button id="reset" style="display:none;">Reset</button>
+    </div>
+  </body>
+</html>
