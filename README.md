@@ -20,3 +20,14 @@ chmod +x install.sh
 
 This downloads the latest version of [tock.js](https://github.com/mrchimp/tock).
 
+## TODO
+
+- Install tock.js with something else like npm or bower.
+- Flesh out the UI
+- Make the timer loop
+- Add a 5 second countdown between the one minute timers
+
+## License
+
+MIT
+
