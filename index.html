@@ -9,51 +9,150 @@
     <script src="deps/tock.js"></script>
     <script>
       window.onload = function() {
+        var COUNTDOWN_TIME = "01:00";
+        //var COUNTDOWN_TIME = "00:03"; // Helpful for testing things without waiting for a full minute
+        var startCountdown = function(event) {
+          $('body').off('click');
+          console.log('starting');
+          if (event && event.target.id == 'reset') {
+            return;
+          }
+          //var audio = new Audio('./ding-small-bell.mp3');
+          var audio = new Audio('./gentle-alarm.mp3');
+          audio.play();
+          $('#time').text(COUNTDOWN_TIME);
+          countdown.start(COUNTDOWN_TIME);
+          $('#time').css({color: '#074f71'});
+          $('#start-instructions').hide();
+          $('#pause-instructions').show();
+          $('#reset').hide();
+          $('body').on('click', pauseTimer);
+        };
+        var pauseTimer = function() {
+          $('body').off('click');
+          console.log('pausing');
+          countdown.pause();
+          $('#start-instructions').show();
+          $('#pause-instructions').hide();
+          $('#reset').show();
+          $('body').on('click', resumeTimer);
+        };
+        var resumeTimer = function(event) {
+          $('body').off('click');
+          console.log('resuming');
+          countdown.pause();
+          $('#start-instructions').hide();
+          $('#pause-instructions').show();
+          $('#reset').hide();
+          $('body').on('click', pauseTimer);
+          $('#reset').on('click', resetTimer);
+        }
+        var resetTimer = function(event) {
+          $('body').off('click');
+          console.log('resetting');
+          countdown.stop();
+          countdown.reset();
+          $('#time').text(COUNTDOWN_TIME);
+          $('#reset').hide();
+          $('body').on('click', startCountdown);
+        };
+
+        var startCooldown =  function() {
+          $('body').off('click');
+          console.log('starting cooldown');
+          $('#time').text("00:05");
+          $('#time').css({color: '#40657547'});
+          cooldown.start("00:05");
+          $('#cooldown').show();
+          $('#instructions').hide();
+          //var audio = new Audio('gentle-alarm.mp3');
+          var audio = new Audio('ding-small-bell.mp3');
+          audio.play();
+
+        }
+        var endCountdown = function() {
+          $('body').off('click');
+          console.log('completing countdown');
+          countdown.stop();
+          startCooldown();
+        };
+        var endCooldown = function() {
+          console.log('ending cooldown');
+          $('#time').text(COUNTDOWN_TIME);
+          cooldown.stop();
+          cooldown.reset();
+          $('#instructions').show();
+          $('#cooldown').hide();
+          startCountdown();
+        };
+
         var countdown = Tock({
           callback: function () {
-            var time = countdown.msToTime(countdown.lap()).split('.')[0]
+            var time = countdown.msToTime(countdown.lap()).split('.')[0];
             $('#time').text(time);
           },
           countdown: true,
           interval: 250,
-          complete: function() {
-            reset();
-          }
+          complete: endCountdown
         });
-        $('#start').on('click', function () {
-          countdown.start("01:00");
-          $('#start').hide();
-          $('#pause').show();
-          $('#reset').show();
+        var cooldown = Tock({
+          callback: function() {
+            var time = cooldown.msToTime(cooldown.lap(), true).split('.')[0];
+            $('#time').text(time);
+          },
+          countdown: true,
+          interval: 250,
+          complete: endCooldown
         });
-        $('#pause').on('click', function () {
-          countdown.pause();
-          if($('#pause').text() == 'Pause') {
-            $('#pause').text('Resume');
-          } else {
-            $('#pause').text('Pause');
-          }
-        });
-        var reset = function () {
-          $('#time').text("01:00");
-          $('#start').show();
-          $('#pause').hide();
-          $('#reset').hide();
-        };
-        $('#reset').on('click', function () {
-          countdown.stop();
-          reset();
-        });
+
+        $('#reset').on('click', resetTimer);
+        $('body').on('click', startCountdown);
       }
     </script>
+    <style>
+      body {
+        background-color: #f2fbff;
+        height: 100%;
+        width: 100%;
+        color: #074e7066;
+      }
+      h1 {
+        font-size: 12pt;
+        /*color: #aaa;*/
+
+      }
+      #time {
+        font-size: 150pt;
+        line-height: 25pt;
+        text-align: center;
+        color: #074f71;
+      }
+      #instructions, #instructions {
+        text-align: center;
+        color: #074e7066;
+      }
+
+      button {
+        border: 1px solid #074e7066;
+        border-radius: 5px;
+        background: #f2fbff;
+        color: #074e7066;
+      }
+
+      #cooldown {
+        text-align: center;
+      }
+
+    </style>
   </head>
   <body>
     <h1>One Minute Timer</h1>
     <div id="clockface"><h2 id="time">01:00</h2></div>
-    <button id="start">Start Timer</button>
-    <div>
-      <button id="pause" style="display:none;">Pause</button>
+    <div id="instructions">
+      <div id="start-instructions"><p>(tap/click to start)</p></div>
+      <div id="pause-instructions" style="display:none;"><p>(tap/click to pause)</p></div>
       <button id="reset" style="display:none;">Reset</button>
     </div>
+    <div id="cooldown" style="display:none;"><p>(cooldown)</p></div>
   </body>
 </html>

@@ -2,6 +2,8 @@
 
 A simple timer that counts down one minute.
 
+#TODO: Should I change it to One Minute Countdown?
+
 ## Run It
 
 ```
@@ -31,3 +33,5 @@ This downloads the latest version of [tock.js](https://github.com/mrchimp/tock).
 
 MIT
 
+Gentle Alarm sound is copyright its owner. Found on: https://notificationsounds.com/wake-up-tones/gentle-alarm-474
+Ding Small Bell sound is copyright its owner. Found on: http://www.orangefreesounds.com/ding-small-bell/
